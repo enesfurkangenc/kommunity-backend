@@ -1,0 +1,13 @@
+{
+  "presets": ["flow", "es2015", "stage-2"],
+  "plugins": [
+    [
+      "babel-plugin-root-import",
+      {
+        "rootPathSuffix": "src/",
+        "rootPathPrefix": "$"
+      }
+    ],
+    "transform-flow-strip-types"
+  ]
+}

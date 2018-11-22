@@ -2,41 +2,71 @@
   "name": "community",
   "version": "0.0.0",
   "private": true,
+  "engines": {
+    "node": "8.11.4"
+  },
   "scripts": {
-    "start": "nodemon ./bin/www --exec babel-node --presets es2015,stage-2",
-    "watch": "DEBUG=community:* npm start",
-    "lint": "./node_modules/.bin/eslint .",
-    "fix-lint": "./node_modules/.bin/eslint --fix .",
-    "test": "./node_modules/.bin/eslint --fix .",
-    "check-if-not-committed": "node scripts/check-if-not-committed.js"
+    "start": "cross-env NODE_ENV=development nodemon src/server.js --exec babel-node",
+    "watch": "cross-env NODE_ENV=development npm start",
+    "check-if-not-committed": "node scripts/git/check-if-not-committed.js",
+    "check-travis": "cross-env NODE_ENV=test run-s -nl lint flow cover",
+    "test": "cross-env NODE_ENV=test jest --config .jest.json --forceExit",
+    "cover": "jest --coverage --config .jest.json --forceExit",
+    "lint": "./node_modules/.bin/eslint src/ test/ scripts/",
+    "lint-fix": "./node_modules/.bin/eslint --fix src/ test/ scripts/",
+    "flow": "flow check --include-warnings",
+    "flow-coverage": "flow coverage --color",
+    "flow-typed-add": "flow-typed install",
+    "db-setup": "cross-env NODE_ENV=development npm run db-setup-dev",
+    "db-setup-dev": "sequelize db:create && babel-node scripts/db/dev-db-setup.js && sequelize db:migrate && sequelize db:seed:all"
   },
   "pre-push": [
     "check-if-not-committed",
     "lint",
-    "test"
+    "flow",
+    "cover"
   ],
   "dependencies": {
-    "body-parser": "^1.18.3",
+    "@sentry/node": "^4.1.1",
+    "apollo-server-express": "^2.1.0",
+    "babel-core": "^6.26.3",
+    "config": "^2.0.1",
     "cookie-parser": "~1.4.3",
-    "debug": "~2.6.9",
+    "cors": "^2.8.4",
     "express": "~4.16.0",
-    "express-session": "^1.15.6",
+    "graphql": "^14.0.2",
     "hbs": "~4.0.1",
     "http-errors": "~1.6.2",
+    "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.11",
+    "md5": "^2.2.1",
     "morgan": "~1.9.0",
+    "mysql2": "^1.6.1",
     "passport": "^0.4.0",
-    "passport-cookie": "^1.0.6",
     "passport-local": "^1.0.0",
-    "sequelize": "^4.39.0"
+    "passport-strategy": "^1.0.0",
+    "sequelize": "^4.39.0",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-eslint": "^10.0.1",
+    "babel-plugin-root-import": "^6.1.0",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-preset-es2015": "^6.24.1",
+    "babel-preset-flow": "^6.23.0",
     "babel-preset-stage-2": "^6.24.1",
+    "cross-env": "^5.2.0",
     "eslint": "^5.6.1",
     "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-flowtype": "^3.0.0",
     "eslint-plugin-import": "^2.14.0",
-    "pre-push": "^0.1.1"
+    "flow-bin": "^0.83.0",
+    "flow-typed": "^2.5.1",
+    "jest": "^23.6.0",
+    "nodemon": "^1.18.4",
+    "npm-run-all": "^4.1.3",
+    "pre-push": "^0.1.1",
+    "sequelize-cli": "^5.2.0"
   }
 }
